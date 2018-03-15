@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.bakitchi.phoapi.dto.TeacherBasicInfoDTO;
+import com.bakitchi.phoapi.entity.CollegeNodesEntity;
 import com.bakitchi.phoapi.entity.PapersInfoEntity;
 import com.bakitchi.phoapi.entity.TechAllEntity;
 import com.bakitchi.phoapi.entity.TechBaseEntity;
@@ -120,13 +121,8 @@ public class BaseDAO {
     final QuerySelect<TechAllEntity,TechAllEntity> query = QueryBuilder.builderFor(TechAllEntity.class).select()
             .add(Restrictions.eq("\"id\"", id)).build();
 
-    Iterable<TechAllEntity> entities = dataStoreApi.findAll(query);
-    Iterator<TechAllEntity> iterator = entities.iterator();
+    TechAllEntity techAllEntity = dataStoreApi.findOne(query);
     TeacherBasicInfoDTO teacherBasicInfoDTO = new TeacherBasicInfoDTO();
-    TechAllEntity techAllEntity = iterator.next();
-    if (techAllEntity == null) {
-      return null;
-    }
     //构建数据传输对象
     teacherBasicInfoDTO.setTechAllEntity(techAllEntity);
     teacherBasicInfoDTO.setPapersList(daoGetPapersInfoByTeacherName(techAllEntity.getName()));
@@ -151,4 +147,43 @@ public class BaseDAO {
 
     return  papersList;
   }
+
+  /**
+   *@Description:发送学院ID，获取该学院的所有教师信息（基本信息）
+   *@Name:  daoGetTeacherInfoByCollegeId
+   *@Param:  [id]
+   *@Return:  java.util.List<com.bakitchi.phoapi.entity.TechAllEntity>
+   *@Author:  Bakitchi
+   *@Created-Time:  2018/3/15 下午4:38
+   */
+  public List<TechAllEntity> daoGetTeacherInfoByCollegeId(Integer id){
+    //获取学院名字
+    String college = daoGetCollegeNameByCollegeId(id);
+    final QuerySelect<TechAllEntity,TechAllEntity> query = QueryBuilder.builderFor(TechAllEntity.class).select()
+            .add(Restrictions.eq("\"college\"", college)).build();
+    Iterable<TechAllEntity> entities = dataStoreApi.findAll(query);
+    Iterator<TechAllEntity> iterator = entities.iterator();
+    //构建TeacherList
+    List<TechAllEntity> teachers = new ArrayList<TechAllEntity>();
+    entities.forEach(single->teachers.add(single));
+    return teachers;
+  }
+
+
+  /**
+   *@Description:根据学院ID获得学院名称
+   *@Name:  daoGetCollegeNameByCollegeId
+   *@Param:  [id]
+   *@Return:  java.lang.String
+   *@Author:  Bakitchi
+   *@Created-Time:  2018/3/15 下午4:39
+   */
+  public String daoGetCollegeNameByCollegeId(Integer id){
+    final QuerySelect<CollegeNodesEntity,CollegeNodesEntity> query = QueryBuilder.builderFor(CollegeNodesEntity.class).select()
+            .add(Restrictions.eq("\"id\"", id)).build();
+    CollegeNodesEntity collegeNodesEntity = dataStoreApi.findOne(query);
+    return collegeNodesEntity.getCollege();
+  }
+
+
 }

@@ -2,11 +2,14 @@ package com.bakitchi.phoapi.controller;
 
 import com.bakitchi.phoapi.dao.BaseDAO;
 import com.bakitchi.phoapi.dto.TeacherBasicInfoDTO;
+import com.bakitchi.phoapi.entity.CollegeNodesEntity;
+import com.bakitchi.phoapi.entity.TechAllEntity;
 import com.bakitchi.phoapi.entity.TechBaseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * @Author: Bakitchi
@@ -24,8 +27,11 @@ public class DemoController {
     return baseDAO.daoGetTeacherInfoById(id);
   }
 
-  @RequestMapping(value = "/teacher/byname/",method = RequestMethod.GET)
-  public TechBaseEntity demo(@RequestParam(value = "name") String name) throws Exception {
-    return baseDAO.daoGetTeacherInfoByName(name);
-  }
+
+
+    @RequestMapping(value = "/college/{id}",method = RequestMethod.GET)
+    public List<TechAllEntity> getTeacherInfoByCollegeId(@PathVariable(value = "id") Integer id) throws Exception {
+        return baseDAO.daoGetTeacherInfoByCollegeId(id);
+    }
+
 }
