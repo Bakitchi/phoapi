@@ -12,5 +12,4 @@ import com.google.code.morphia.annotations.Property;
 @Entity(value = "TEST2")
 public class Test2Entity {
     @Property(value = "id")
-    private Integer id;
-}
+    private Integer id;}

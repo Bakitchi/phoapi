@@ -66,8 +66,7 @@ public class BaseDAO {
 
 
   public void findOneUser(String id) throws Exception {
-    final QuerySelect<UserEntity,UserEntity> query = QueryBuilder.builderFor(UserEntity.class).select()
-    .build();
+    final QuerySelect<UserEntity,UserEntity> query = QueryBuilder.builderFor(UserEntity.class).select().build();
     Iterable<UserEntity> entities = dataStoreApi.findAll(query);
     System.out.println(null == entities);
     System.out.println(entities);
@@ -89,6 +88,20 @@ public class BaseDAO {
     Iterator<TechBaseEntity> iterator = entities.iterator();
     return iterator.next();
   }
+
+
+  public TechBaseEntity daoGetTeacherInfoByName(String  name){
+    final QuerySelect<TechBaseEntity,TechBaseEntity> query = QueryBuilder.builderFor(TechBaseEntity.class).select()
+            .add(Restrictions.eq("\"name\"", name)).build();
+
+    Iterable<TechBaseEntity> entities = dataStoreApi.findAll(query);
+    Iterator<TechBaseEntity> iterator = entities.iterator();
+    return iterator.next();
+  }
+
+
+
+
 
 
 
