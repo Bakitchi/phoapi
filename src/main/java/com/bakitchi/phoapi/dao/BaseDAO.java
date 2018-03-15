@@ -14,9 +14,12 @@ import com.bakitchi.phoapi.entity.TechAllEntity;
 import com.bakitchi.phoapi.entity.TechBaseEntity;
 import com.eharmony.pho.api.DataStoreApi;
 import com.eharmony.pho.hbase.PhoenixHBaseDataStoreApiImpl;
+import com.eharmony.pho.hbase.query.PhoenixHBaseQueryExecutor;
 import com.eharmony.pho.hbase.util.PhoenixConnectionManager;
 import com.eharmony.pho.query.QuerySelect;
+import com.eharmony.pho.query.QueryUpdate;
 import com.eharmony.pho.query.builder.QueryBuilder;
+import com.eharmony.pho.query.builder.QueryUpdateBuilder;
 import com.eharmony.pho.query.criterion.Restrictions;
 import com.google.common.collect.Lists;
 import org.apache.hadoop.yarn.webapp.hamlet.Hamlet;
@@ -46,6 +49,11 @@ public class BaseDAO {
 
   @Autowired
   DataStoreApi dataStoreApi;
+
+//  @Autowired
+//  PhoenixHBaseQueryExecutor phoenixHBaseQueryExecutor;
+//
+//
 //  /**
 //   *@Description: 连接数据库
 //   *@Name:  static initializer
@@ -59,13 +67,7 @@ public class BaseDAO {
 //      con = PhoenixConnectionManager.getConnection(url);
 //      if (null != con) {
 //        System.out.println("连接成功！");
-//        System.out.println(con.toString());
-//        String sql="SELECT * FROM TEST2";
-//        Statement statement =  con.createStatement();
-//        ResultSet results =  statement.executeQuery(sql);
-//        while(null!=results&&results.next()) {
-//          System.out.println("id:" + results.getString(1) + "name:" + results.getString(2));
-//        }
+//
 //      }
 //    } catch (Exception e) {
 //      e.printStackTrace();
@@ -119,7 +121,7 @@ public class BaseDAO {
   public TeacherBasicInfoDTO daoGetTeacherInfoById(Integer id){
 
     final QuerySelect<TechAllEntity,TechAllEntity> query = QueryBuilder.builderFor(TechAllEntity.class).select()
-            .add(Restrictions.eq("\"id\"", id)).build();
+            .add(Restrictions.eq("ID", id)).build();
 
     TechAllEntity techAllEntity = dataStoreApi.findOne(query);
     TeacherBasicInfoDTO teacherBasicInfoDTO = new TeacherBasicInfoDTO();
@@ -160,7 +162,7 @@ public class BaseDAO {
     //获取学院名字
     String college = daoGetCollegeNameByCollegeId(id);
     final QuerySelect<TechAllEntity,TechAllEntity> query = QueryBuilder.builderFor(TechAllEntity.class).select()
-            .add(Restrictions.eq("\"college\"", college)).build();
+            .add(Restrictions.eq("COLLEGE", college)).build();
     Iterable<TechAllEntity> entities = dataStoreApi.findAll(query);
     Iterator<TechAllEntity> iterator = entities.iterator();
     //构建TeacherList
@@ -180,9 +182,50 @@ public class BaseDAO {
    */
   public String daoGetCollegeNameByCollegeId(Integer id){
     final QuerySelect<CollegeNodesEntity,CollegeNodesEntity> query = QueryBuilder.builderFor(CollegeNodesEntity.class).select()
-            .add(Restrictions.eq("\"id\"", id)).build();
+            .add(Restrictions.eq("ID", id)).build();
     CollegeNodesEntity collegeNodesEntity = dataStoreApi.findOne(query);
     return collegeNodesEntity.getCollege();
+  }
+
+    /**
+     *@Description:根据教师ID获取教师实体
+     *@Name:  daoGetTeacherEntityByTeacherId
+     *@Param:  [id]
+     *@Return:  com.bakitchi.phoapi.entity.TechAllEntity
+     *@Author:  Bakitchi
+     *@Created-Time:  2018/3/15 下午9:20
+     */
+    public TechAllEntity daoGetTeacherEntityByTeacherId(Integer id){
+        final QuerySelect<TechAllEntity,TechAllEntity> query = QueryBuilder.builderFor(TechAllEntity.class).select()
+                .add(Restrictions.eq("ID", id)).build();
+        return dataStoreApi.findOne(query);
+    }
+
+
+  /**
+   *@Description:根据教师ID返回教师访问量
+   *@Name:  daoGetVisitByTeacherId
+   *@Param:  [id]
+   *@Return:  java.lang.Integer
+   *@Author:  Bakitchi
+   *@Created-Time:  2018/3/15 下午6:52
+   */
+  public Integer daoGetVisitByTeacherId(Integer id){
+    return daoGetTeacherEntityByTeacherId(id).getVisit();
+  }
+
+    /**
+     *@Description:根据教师ID更新教师访问量（每次请求则+1）
+     *@Name:  daoUpdateVisitByTeacherId
+     *@Param:  [id]
+     *@Return:  void
+     *@Author:  Bakitchi
+     *@Created-Time:  2018/3/15 下午9:22
+     */
+  public void daoUpdateVisitByTeacherId(Integer id){
+    TechAllEntity techAllEntity = daoGetTeacherEntityByTeacherId(id);
+    techAllEntity.setVisit(techAllEntity.getVisit()+1);
+    dataStoreApi.save(techAllEntity);
   }
 
 

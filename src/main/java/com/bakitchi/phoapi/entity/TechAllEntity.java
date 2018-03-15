@@ -2,6 +2,7 @@ package com.bakitchi.phoapi.entity;
 
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Property;
+import com.oracle.webservices.internal.api.message.PropertySet;
 
 /**
  * @Author: Bakitchi
@@ -11,35 +12,38 @@ import com.google.code.morphia.annotations.Property;
 
 @Entity(value = "TECH_ALL")
 public class TechAllEntity {
-    @Property(value = "id")
+    @Property(value = "ID")
     private Integer id;
 
-    @Property(value = "name")
+    @Property(value = "NAME")
     private  String name;
 
-    @Property(value = "img")
+    @Property(value = "IMG")
     private String img;
 
-    @Property(value = "college")
+    @Property(value = "COLLEGE")
     private  String college;
 
-    @Property(value = "abstract")
+    @Property(value = "ABSTRACT")
     private  String abstractinfo;
 
-    @Property(value = "project")
+    @Property(value = "PROJECT")
     private  String project;
 
-    @Property(value = "wanted")
+    @Property(value = "WANTED")
     private  String wanted;
 
-    @Property(value = "direction")
+    @Property(value = "DIRECTION")
     private  String direction;
 
-    @Property(value = "contact")
+    @Property(value = "CONTACT")
     private  String contact;
 
-    @Property(value = "visit")
+    @Property(value = "VISIT")
     private  Integer visit;
+
+    @Property(value = "TIME")
+    private String time;
 
     public Integer getId() {
         return id;
@@ -119,5 +123,13 @@ public class TechAllEntity {
 
     public void setVisit(Integer visit) {
         this.visit = visit;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

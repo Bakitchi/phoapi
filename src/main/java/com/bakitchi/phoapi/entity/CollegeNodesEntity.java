@@ -11,13 +11,13 @@ import com.google.code.morphia.annotations.Property;
 
 @Entity(value = "COLLEGE_NODES")
 public class CollegeNodesEntity {
-    @Property(value = "id")
+    @Property(value = "ID")
     private Integer id;
 
-    @Property(value = "college")
+    @Property(value = "COLLEGE")
     private String college;
 
-    @Property(value = "count")
+    @Property(value = "COUNT")
     private Integer count;
 
     public Integer getId() {

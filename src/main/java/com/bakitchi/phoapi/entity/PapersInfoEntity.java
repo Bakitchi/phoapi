@@ -10,34 +10,34 @@ import com.google.code.morphia.annotations.Property;
  */
 @Entity(value = "PAPERS_INFO")
 public class PapersInfoEntity {
-    @Property(value = "index")
+    @Property(value = "INDEX")
     private Integer index;
 
-    @Property(value = "title")
+    @Property(value = "TITLE")
     private String title;
 
-    @Property(value = "link")
+    @Property(value = "LINK")
     private String link;
 
-    @Property(value = "resource")
+    @Property(value = "RESOURCE")
     private String resource;
 
-    @Property(value = "date")
+    @Property(value = "DATA")
     private String date;
 
-    @Property(value = "catagory")
+    @Property(value = "CATAGORY")
     private String catagory;
 
-    @Property(value = "authors")
+    @Property(value = "AUTHORS")
     private String authors;
 
-    @Property(value = "colleges")
+    @Property(value = "COLLEGES")
     private String colleges;
 
-    @Property(value = "kws")
+    @Property(value = "KWS")
     private String kws;
 
-    @Property(value = "citation")
+    @Property(value = "CITATION")
     private Integer citation;
 
     public Integer getIndex() {

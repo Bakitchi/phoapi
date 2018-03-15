@@ -34,4 +34,14 @@ public class DemoController {
         return baseDAO.daoGetTeacherInfoByCollegeId(id);
     }
 
+  @RequestMapping(value = "/teacherVisit/{id}",method = RequestMethod.GET)
+  public Integer getTeacherVisitByTeacherId(@PathVariable(value = "id") Integer id) throws Exception {
+    return baseDAO.daoGetVisitByTeacherId(id);
+  }
+
+  @RequestMapping(value = "/updateVisit/{id}",method = RequestMethod.GET)
+  public void updateVisitByTeacherId(@PathVariable(value = "id") Integer id) throws Exception {
+    baseDAO.daoUpdateVisitByTeacherId(id);
+  }
+
 }
