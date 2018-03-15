@@ -5,9 +5,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <util:list id="entityPropertiesMappings">
-        <value>com.bakitchi.phoapi.entity.UserEntity</value>
-        <value>com.bakitchi.phoapi.entity.Test2Entity</value>
         <value>com.bakitchi.phoapi.entity.TechBaseEntity</value>
+        <value>com.bakitchi.phoapi.entity.TechAllEntity</value>
+        <value>com.bakitchi.phoapi.entity.PapersInfoEntity</value>
+        <!--<value>com.bakitchi.phoapi.dto.TeacherBasicInfoDTO</value>-->
     </util:list>
 
     <bean id="entityPropertiesMappingContext" class="com.eharmony.pho.mapper.EntityPropertiesMappingContext">

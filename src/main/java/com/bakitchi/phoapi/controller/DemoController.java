@@ -1,6 +1,7 @@
 package com.bakitchi.phoapi.controller;
 
 import com.bakitchi.phoapi.dao.BaseDAO;
+import com.bakitchi.phoapi.dto.TeacherBasicInfoDTO;
 import com.bakitchi.phoapi.entity.TechBaseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,15 +18,10 @@ public class DemoController {
   @Autowired
   BaseDAO baseDAO;
 
-  @RequestMapping(value = "/test",method = RequestMethod.GET)
-  public  String demo() throws Exception {
-    baseDAO.findOneUser("100");
-    return "";
-  }
 
   @RequestMapping(value = "/teacher/{id}",method = RequestMethod.GET)
-  public TechBaseEntity demo(@PathVariable(value = "id") Integer id) throws Exception {
-    return baseDAO.daoGetTeacherInfo(id);
+  public TeacherBasicInfoDTO demo(@PathVariable(value = "id") Integer id) throws Exception {
+    return baseDAO.daoGetTeacherInfoById(id);
   }
 
   @RequestMapping(value = "/teacher/byname/",method = RequestMethod.GET)
