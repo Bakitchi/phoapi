@@ -24,4 +24,6 @@ public class CollegeDTO {
     public void setName(String name) {
         this.name = name;
     }
+
+
 }

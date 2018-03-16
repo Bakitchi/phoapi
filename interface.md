@@ -4,7 +4,7 @@
 - [x] GET 获得教师所发文章
 - [x] GET 获得教师招生信息
 
-- [ ] GET 获得教师留言板信息
+- [x] GET 获得教师留言板信息
 require teacherID 要查询留言板的老师的ID
 response {
 subject: [
@@ -85,7 +85,7 @@ e.g.
 ]
 }
 
-- [ ] GET 获得某个帖子的所有回复
+- [x] GET 获得某个帖子的所有回复
 require: {
 	teacherID: String,
 	subjectID: String
@@ -99,7 +99,7 @@ response: {
 	]
 }
 
-- [ ] POST 新建留言板主题
+- [x] POST 新建留言板主题
 require: {
 	teacherID: String,
 	topic: String,
@@ -107,7 +107,7 @@ require: {
 }
 response null
 
-- [ ] POST 新建留言板回复
+- [x] POST 新建留言板回复
 require {
 	teacherID: String,
 	subjectID: String,

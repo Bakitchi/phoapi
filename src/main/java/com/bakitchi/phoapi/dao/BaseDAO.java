@@ -9,8 +9,11 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.bakitchi.phoapi.dto.CollegeDTO;
+import com.bakitchi.phoapi.dto.MsgDTO;
+import com.bakitchi.phoapi.dto.ReplyDTO;
 import com.bakitchi.phoapi.dto.TeacherBasicInfoDTO;
 import com.bakitchi.phoapi.entity.*;
+import com.bakitchi.phoapi.utils.TimeUtil;
 import com.eharmony.pho.api.DataStoreApi;
 import com.eharmony.pho.hbase.PhoenixHBaseDataStoreApiImpl;
 import com.eharmony.pho.hbase.query.PhoenixHBaseQueryExecutor;
@@ -23,6 +26,7 @@ import com.eharmony.pho.query.criterion.Ordering;
 import com.eharmony.pho.query.criterion.Restrictions;
 import com.eharmony.pho.query.criterion.junction.Disjunction;
 import com.google.common.collect.Lists;
+import com.sun.xml.internal.ws.api.model.MEP;
 import org.apache.hadoop.yarn.webapp.hamlet.Hamlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ImportResource;
@@ -430,4 +434,92 @@ public class BaseDAO {
   }
 
 
+    /**
+     *@Description:新建留言主题
+     *@Name:  daoNewMessageBox
+     *@Param:  [tid, topic, content]
+     *@Return:  void
+     *@Author:  Bakitchi
+     *@Created-Time:  2018/3/16 下午4:31
+     */
+  public void daoNewMessageBox(Integer tid,String topic,String content){
+      MessageEntity messageEntity = new MessageEntity();
+      messageEntity.setTeacherID(tid);
+      messageEntity.setContent(content);
+      messageEntity.setTopic(topic);
+      messageEntity.setCreateTime(TimeUtil.getCreateTime());
+      dataStoreApi.save(messageEntity);
+  }
+
+
+    /**
+     *@Description:新建主题回复
+     *@Name:  daoNewReply
+     *@Param:  [tid, topic, content]
+     *@Return:  void
+     *@Author:  Bakitchi
+     *@Created-Time:  2018/3/16 下午4:31
+     */
+  public void daoNewReply(Integer tid,String topic,String content){
+      ReplyEntity replyEntity = new ReplyEntity();
+      replyEntity.setContent(content);
+      replyEntity.setReplyTime(TimeUtil.getCreateTime());
+      replyEntity.setTopic(topic);
+      replyEntity.setTeacherId(tid);
+      dataStoreApi.save(replyEntity);
+    }
+
+    /**
+     *@Description:获得一个主题下的所有回复
+     *@Name:  daoGetAllReply
+     *@Param:  [tid, topic]
+     *@Return:  java.util.List<com.bakitchi.phoapi.dto.ReplyDTO>
+     *@Author:  Bakitchi
+     *@Created-Time:  2018/3/16 下午4:32
+     */
+  public List<ReplyDTO> daoGetAllReply(Integer tid, String topic){
+      QuerySelect<ReplyEntity,ReplyEntity> query = QueryBuilder.builderFor(ReplyEntity.class)
+              .add(Restrictions.eq("TEACHERID", tid)).add(Restrictions.eq("TOPIC", topic)).select().build();
+
+      Iterable<ReplyEntity> entities = dataStoreApi.findAll(query);
+      List<ReplyEntity> replyEntityList = new ArrayList<>();
+      entities.forEach(single->replyEntityList.add(single));
+      List<ReplyDTO> replyDTOList = new ArrayList<ReplyDTO>();
+      for (ReplyEntity replyEntity:replyEntityList){
+          ReplyDTO replyDTO = new ReplyDTO();
+          replyDTO.setReplyTime(replyEntity.getReplyTime());
+          replyDTO.setContent(replyEntity.getContent());
+          replyDTOList.add(replyDTO);
+      }
+      return replyDTOList;
+    }
+
+
+    /**
+     *@Description:获得教师的所有留言评论及回复
+     *@Name:  daoGetAllMsgByTeacherId
+     *@Param:  [tid]
+     *@Return:  java.util.List<com.bakitchi.phoapi.dto.MsgDTO>
+     *@Author:  Bakitchi
+     *@Created-Time:  2018/3/16 下午4:33
+     */
+  public List<MsgDTO> daoGetAllMsgByTeacherId(Integer tid){
+      QuerySelect<MessageEntity,MessageEntity> query = QueryBuilder.builderFor(MessageEntity.class)
+              .add(Restrictions.eq("TEACHERID", tid)).select().build();
+      Iterable<MessageEntity> entities = dataStoreApi.findAll(query);
+      List<MessageEntity> messageEntities = new ArrayList<>();
+      entities.forEach(single->messageEntities.add(single));
+      List<MsgDTO> msgDTOList = new ArrayList<>();
+      for (MessageEntity messageEntity : messageEntities){
+          MsgDTO msgDTO = new MsgDTO();
+          msgDTO.setCreateTime(messageEntity.getCreateTime());
+          msgDTO.setContent(messageEntity.getContent());
+          msgDTO.setTopic(messageEntity.getTopic());
+          msgDTO.setReplyDTOList(daoGetAllReply(messageEntity.getTeacherID(), messageEntity.getTopic()));
+          msgDTOList.add(msgDTO);
+      }
+
+      return msgDTOList;
+
+  }
 }
