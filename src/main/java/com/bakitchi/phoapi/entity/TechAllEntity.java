@@ -43,7 +43,7 @@ public class TechAllEntity {
     private  Integer visit;
 
     @Property(value = "TIME")
-    private String time;
+    private Long time;
 
     public Integer getId() {
         return id;
@@ -125,11 +125,11 @@ public class TechAllEntity {
         this.visit = visit;
     }
 
-    public String getTime() {
+    public Long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(Long time) {
         this.time = time;
     }
 }

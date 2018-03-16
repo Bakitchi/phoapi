@@ -3,10 +3,15 @@ package com.bakitchi.phoapi.dao;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import com.bakitchi.phoapi.dto.CollegeDTO;
 import com.bakitchi.phoapi.dto.TeacherBasicInfoDTO;
 import com.bakitchi.phoapi.entity.CollegeNodesEntity;
 import com.bakitchi.phoapi.entity.PapersInfoEntity;
@@ -20,7 +25,9 @@ import com.eharmony.pho.query.QuerySelect;
 import com.eharmony.pho.query.QueryUpdate;
 import com.eharmony.pho.query.builder.QueryBuilder;
 import com.eharmony.pho.query.builder.QueryUpdateBuilder;
+import com.eharmony.pho.query.criterion.Ordering;
 import com.eharmony.pho.query.criterion.Restrictions;
+import com.eharmony.pho.query.criterion.junction.Disjunction;
 import com.google.common.collect.Lists;
 import org.apache.hadoop.yarn.webapp.hamlet.Hamlet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,7 +149,7 @@ public class BaseDAO {
   public List<PapersInfoEntity> daoGetPapersInfoByTeacherName(String name){
 
     final QuerySelect<PapersInfoEntity,PapersInfoEntity> query = QueryBuilder.builderFor(PapersInfoEntity.class).select()
-            .add(Restrictions.like("\"authors\"", name)).build();
+            .add(Restrictions.like("AUTHORS", name)).build();
     Iterable<PapersInfoEntity> entities = dataStoreApi.findAll(query);
     List<PapersInfoEntity> papersList = new ArrayList<>();
     entities.forEach(single->papersList.add(single));
@@ -227,6 +234,79 @@ public class BaseDAO {
     techAllEntity.setVisit(techAllEntity.getVisit()+1);
     dataStoreApi.save(techAllEntity);
   }
+
+  /**
+   *@Description:获得访问量最多的十个教师List
+   *@Name:  daoGetMostVisitTeacher
+   *@Param:  []
+   *@Return:  java.util.List<com.bakitchi.phoapi.entity.TechAllEntity>List
+   *@Author:  Bakitchi
+   *@Created-Time:  2018/3/16 上午9:47
+   */
+  public List<TechAllEntity> daoGetMostVisitTeacher(){
+
+    final QuerySelect<TechAllEntity,TechAllEntity> query = QueryBuilder.builderFor(TechAllEntity.class).select()
+            .setMaxResults(10).addOrder(new Ordering("VISIT", Ordering.Order.DESCENDING, Ordering.NullOrdering.FIRST)).build();
+
+    Iterable<TechAllEntity> entities = dataStoreApi.findAll(query);
+    List<TechAllEntity> techAllEntityList = new ArrayList<>();
+    entities.forEach(single->techAllEntityList.add(single));
+    return techAllEntityList;
+  }
+
+  //"yyyy-MM-dd HH:MM:ss"
+  /**
+   *@Description:获取最近修改的十个教师List
+   *@Name:  daoGetRecentModifyTeacher
+   *@Param:  []
+   *@Return:  java.util.List<com.bakitchi.phoapi.entity.TechAllEntity>
+   *@Author:  Bakitchi
+   *@Created-Time:  2018/3/16 上午10:22
+   */
+  public List<TechAllEntity> daoGetRecentModifyTeacher() throws ParseException {
+
+    final QuerySelect<TechAllEntity,TechAllEntity> query = QueryBuilder.builderFor(TechAllEntity.class).select()
+            .setMaxResults(10).addOrder(new Ordering("TIME", Ordering.Order.DESCENDING, Ordering.NullOrdering.FIRST)).build();
+
+    Iterable<TechAllEntity> entities = dataStoreApi.findAll(query);
+    List<TechAllEntity> techAllEntityList = new ArrayList<>();
+    entities.forEach(single->techAllEntityList.add(single));
+    return techAllEntityList;
+  }
+
+
+  /**
+   *@Description:获得所有学院
+   *@Name:  daoGetAllCollege
+   *@Param:  []
+   *@Return:  java.util.List<com.bakitchi.phoapi.dto.CollegeDTO>
+   *@Author:  Bakitchi
+   *@Created-Time:  2018/3/16 上午10:37
+   */
+  public List<CollegeDTO> daoGetAllCollege(){
+
+    final QuerySelect<CollegeNodesEntity,CollegeNodesEntity> query = QueryBuilder.builderFor(CollegeNodesEntity.class).select().build();
+
+    Iterable<CollegeNodesEntity> entities = dataStoreApi.findAll(query);
+    Iterator<CollegeNodesEntity> iterator = entities.iterator();
+    List<CollegeDTO> collegeList = new ArrayList<CollegeDTO>();
+    List<CollegeNodesEntity> collegeNodesEntities = new ArrayList<CollegeNodesEntity>();
+    entities.forEach(single->collegeNodesEntities.add(single));
+    for (CollegeNodesEntity collegeNodesEntity : collegeNodesEntities){
+        CollegeDTO collegeDTO = new CollegeDTO();
+        collegeDTO.setName(collegeNodesEntity.getCollege());
+        collegeDTO.setInstitutionID(collegeNodesEntity.getId());
+        collegeList.add(collegeDTO);
+    }
+//    while (iterator.hasNext()) {
+//      CollegeDTO collegeDTO = new CollegeDTO();
+//      collegeDTO.setInstitutionID(iterator.next().getId());
+//      collegeDTO.setName(iterator.next().getCollege());
+//      collegeList.add(collegeDTO);
+//    }
+    return collegeList;
+  }
+
 
 
 }

@@ -117,7 +117,7 @@ response null
 
 - [ ]GET 获得所有大类学科
 
-- [ ]GET 获得所有学院名字列表
+- [x]GET 获得所有学院名字列表
 require null
 response {
 	items: [
@@ -133,7 +133,7 @@ e.g.:
 }
 - [x]GET 发送老师姓名/ID 获得该老师的访问量
 
-- [x] GET 发送某个学院ID，返回该学院所有老师基本信息
+- [x]GET 发送某个学院ID，返回该学院所有老师基本信息
 require {instituteID: String} 学院ID
 response {
 	items: [
@@ -193,9 +193,9 @@ e.g.:
 		},
 	]
 }
-- [ ]GET 获得访问次数最多的老师们的基本信息
+- [x]GET 获得访问次数最多的老师们的基本信息
 
-- [ ]GET 获得最近更新的老师们的基本信息
+- [x]GET 获得最近更新的老师们的基本信息
 
 - [x]UPDATE 发送老师姓名/ID 更新访问量
 
