@@ -7,10 +7,7 @@ import com.bakitchi.phoapi.entity.PapersInfoEntity;
 import com.bakitchi.phoapi.entity.TechAllEntity;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sun.misc.Request;
 
 import java.text.ParseException;
@@ -105,5 +102,32 @@ public class TeacherController {
     return baseDAO.daoGetRecentModifyTeacher();
   }
 
+  //Get发送查询字符串和查询类别 获得查询结果
+  //typ取NAME时按名字准确查找
+  //typ取DIRECTION时按方向模糊查找
+  //tpy取ABSTRCT时全文检索
+  @RequestMapping(value="/query",method = RequestMethod.GET)
+  public List<TechAllEntity> getQueryResults(@RequestParam(value="typ")String typ,@RequestParam(value = "wd") String wd){
+    System.out.println(typ+wd);
+    return baseDAO.daoQueryTeacher(typ, wd);
+  }
+
+  //按教师ID更新教师基本信息
+  @RequestMapping(value = "/modifyBrief/{id}",method = RequestMethod.PUT)
+  public void updateTeacherInfo(@PathVariable(value = "id") Integer id, @RequestParam(value = "info") String info){
+    baseDAO.daoUpdateAbstract(id, info);
+  }
+
+  //按教师ID更新教师项目
+  @RequestMapping(value = "/modifyPro/{id}",method = RequestMethod.PUT)
+  public void updateTeacher(@PathVariable(value = "id") Integer id, @RequestParam(value = "info") String info){
+    baseDAO.daoUpdateTeacherPro(id, info);
+  }
+
+  //按教师ID更新教师招生信息
+  @RequestMapping(value = "/modifyWanted/{id}",method = RequestMethod.PUT)
+  public void updateTeacherWanted(@PathVariable(value = "id") Integer id, @RequestParam(value = "info") String info){
+    baseDAO.daoUpdateTeacherWanted(id, info);
+  }
 
 }

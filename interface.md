@@ -4,7 +4,7 @@
 - [x] GET 获得教师所发文章
 - [x] GET 获得教师招生信息
 
-- [ ]GET 获得教师留言板信息
+- [ ] GET 获得教师留言板信息
 require teacherID 要查询留言板的老师的ID
 response {
 subject: [
@@ -85,7 +85,7 @@ e.g.
 ]
 }
 
-- [ ]GET 获得某个帖子的所有回复
+- [ ] GET 获得某个帖子的所有回复
 require: {
 	teacherID: String,
 	subjectID: String
@@ -99,7 +99,7 @@ response: {
 	]
 }
 
-- [ ]POST 新建留言板主题
+- [ ] POST 新建留言板主题
 require: {
 	teacherID: String,
 	topic: String,
@@ -107,7 +107,7 @@ require: {
 }
 response null
 
-- [ ]POST 新建留言板回复
+- [ ] POST 新建留言板回复
 require {
 	teacherID: String,
 	subjectID: String,
@@ -115,9 +115,9 @@ require {
 }
 response null
 
-- [ ]GET 获得所有大类学科
+- [x] GET 获得所有大类学科
 
-- [x]GET 获得所有学院名字列表
+- [x] GET 获得所有学院名字列表
 require null
 response {
 	items: [
@@ -131,9 +131,9 @@ e.g.:
 {
 	items:[{name: "xx学院", instituteID: "x"}, {name: "yy学院", instituteID: "y"}, {name: "zz学院", instituteID: "z"}]
 }
-- [x]GET 发送老师姓名/ID 获得该老师的访问量
+- [x] GET 发送老师姓名/ID 获得该老师的访问量
 
-- [x]GET 发送某个学院ID，返回该学院所有老师基本信息
+- [x] GET 发送某个学院ID，返回该学院所有老师基本信息
 require {instituteID: String} 学院ID
 response {
 	items: [
@@ -193,13 +193,13 @@ e.g.:
 		},
 	]
 }
-- [x]GET 获得访问次数最多的老师们的基本信息
+- [x] GET 获得访问次数最多的老师们的基本信息
 
-- [x]GET 获得最近更新的老师们的基本信息
+- [x] GET 获得最近更新的老师们的基本信息
 
-- [x]UPDATE 发送老师姓名/ID 更新访问量
+- [x] UPDATE 发送老师姓名/ID 更新访问量
 
-- [ ]GET 发送查询字符串和查询类别 获得查询结果
+- [x] GET 发送查询字符串和查询类别 获得查询结果
 require {searchType: Number, value: String}
 response {
 	items: [
@@ -213,16 +213,16 @@ response {
 	]
 }
 
-- [ ]POST 登录请求 验证并进入后台
-- [ ]PUT 修改教师基本信息
-- [ ]PUT 修改教师参与项目
-- [ ]PUT 修改教师所发文章
-- [ ]PUT 修改教师招生信息
+- [ ] POST 登录请求 验证并进入后台
+- [x] PUT 修改教师基本信息
+- [x] PUT 修改教师参与项目
+- [ ] PUT 修改教师所发文章
+- [x] PUT 修改教师招生信息
 
 ## 可视化
-0. 绘制出大类学科中的所有研究方向网络图。
+- [ ] 0. 绘制出大类学科中的所有研究方向网络图。
 
-- [ ]GET 发送某个大类学科，获得该学科的研究方向列表和每个研究方向的论文数。也可以获得全部学科及全部研究方向
+GET 发送某个大类学科，获得该学科的研究方向列表和每个研究方向的论文数。也可以获得全部学科及全部研究方向
 require {subject: [String]} | null 若不发送查询字段 则返回全部学科及全部研究方向
 response [
 {
@@ -236,9 +236,9 @@ response [
 }
 ]
 
-1. 根据导师论文的合作者，绘制出学术关系网络图
+- [ ] 1. 根据导师论文的合作者，绘制出学术关系网络图
 
-- [ ]GET 发送一个导师列表，获得所有该导师的合作者及合作篇数，已经每个导师合作发文的总数。也可以获得全部老师的上述信息。
+GET 发送一个导师列表，获得所有该导师的合作者及合作篇数，已经每个导师合作发文的总数。也可以获得全部老师的上述信息。
 require {teacherID: [String]}
 response {
 	nodes: [{
@@ -252,9 +252,9 @@ response {
 	}]
 }
 
-2. 根据导师论文中的关键词绘制网络图。
+- [ ] 2. 根据导师论文中的关键词绘制网络图。
 
-- [ ]GET 发送导师列表，获得所有该导师的论文题目、链接和去重后的关键词
+GET 发送导师列表，获得所有该导师的论文题目、链接和去重后的关键词
 require {teacherID: [String]}
 response {
 	nodes: [
@@ -273,9 +273,9 @@ response {
 	]
 }
 
-3. 以学院被引最多的论文的关键字和作者为依据，分析不同学院的学科交叉情况。
+- [ ] 3. 以学院被引最多的论文的关键字和作者为依据，分析不同学院的学科交叉情况。
 
-- [ ]GET 发送学院名/ID列表，获得不同学院老师合作的论文数
+GET 发送学院名/ID列表，获得不同学院老师合作的论文数
 require {collegeID: [String]}
 response {
 	nodes: [
@@ -292,8 +292,8 @@ response {
 		}
 	]
 }
-4. 分析学院历年来科研比重。
-- [ ]GET 发送学院名/ID列表，获得该学院历年来的科研比重(每年比重 = 被引数 / 全校被引数)
+- [ ] 4. 分析学院历年来科研比重。
+GET 发送学院名/ID列表，获得该学院历年来的科研比重(每年比重 = 被引数 / 全校被引数)
 require {collegeID: [String]}
 response [
 	year: Number,

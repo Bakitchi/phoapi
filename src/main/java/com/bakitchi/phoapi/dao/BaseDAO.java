@@ -6,17 +6,11 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import com.bakitchi.phoapi.dto.CollegeDTO;
 import com.bakitchi.phoapi.dto.TeacherBasicInfoDTO;
-import com.bakitchi.phoapi.entity.CollegeNodesEntity;
-import com.bakitchi.phoapi.entity.PapersInfoEntity;
-import com.bakitchi.phoapi.entity.TechAllEntity;
-import com.bakitchi.phoapi.entity.TechBaseEntity;
+import com.bakitchi.phoapi.entity.*;
 import com.eharmony.pho.api.DataStoreApi;
 import com.eharmony.pho.hbase.PhoenixHBaseDataStoreApiImpl;
 import com.eharmony.pho.hbase.query.PhoenixHBaseQueryExecutor;
@@ -307,6 +301,133 @@ public class BaseDAO {
     return collegeList;
   }
 
+
+    /**
+     *@Description: 发送查询字符串和查询类别 获得查询结果
+     *@Name:  daoQueryTeacher
+     *@Param:  [typ, wd]
+     *@Return:  java.util.List<com.bakitchi.phoapi.entity.TechAllEntity>
+     *@Author:  Bakitchi
+     *@Created-Time:  2018/3/16 下午12:55
+     */
+  public List<TechAllEntity> daoQueryTeacher(String typ, String wd){
+
+      QuerySelect<TechAllEntity,TechAllEntity> query = null;
+      switch (typ) {
+          case "NAME":
+              query = QueryBuilder.builderFor(TechAllEntity.class).select()
+                      .add(Restrictions.eq("NAME", wd)).build();
+              break;
+
+          case "DIRECTION":
+              query = QueryBuilder.builderFor(TechAllEntity.class).select()
+                      .add(Restrictions.like("DIRECTION", wd)).build();
+              break;
+
+          case "ABSTRACT":
+              query = QueryBuilder.builderFor(TechAllEntity.class).select()
+                      .add(Restrictions.like("ABSTRACT", wd)).build();
+              break;
+
+          default:
+              break;
+
+      }
+
+      if (null == query){
+          return null;
+      }
+
+      Iterable<TechAllEntity> entities = dataStoreApi.findAll(query);
+      List<TechAllEntity> teacherList = new ArrayList<>();
+      entities.forEach(single->teacherList.add(single));
+
+      return teacherList;
+  }
+
+    /**
+     *@Description: 获得所有大类学科
+     *@Name:  daoGetAllSubjects
+     *@Param:  []
+     *@Return:  java.util.List<java.lang.String>
+     *@Author:  Bakitchi
+     *@Created-Time:  2018/3/16 下午2:17
+     */
+  public List<String> daoGetAllSubjects(){
+
+      final QuerySelect<TechSubjectEntity,TechSubjectEntity> query = QueryBuilder.builderFor(TechSubjectEntity.class).
+              select().build();
+      Iterable<TechSubjectEntity> entities = dataStoreApi.findAll(query);
+      List<TechSubjectEntity> techSubjectEntities = new ArrayList<>();
+      entities.forEach(single->techSubjectEntities.add(single));
+      List<String> cList = new ArrayList<>();
+      for (TechSubjectEntity techSubjectEntity:entities){
+          cList.add(techSubjectEntity.getBelong());
+      }
+
+      StringBuffer sb = new StringBuffer();
+      for (String str:cList){
+          sb.append(str);
+      }
+
+      String str2 = sb.toString();
+
+      String[] strArr = str2.split(";");
+
+      List<String> strListD = Arrays.asList(strArr);
+
+      List newList = new ArrayList(new HashSet(strListD));
+      return newList;
+  }
+
+    /**
+     *@Description:更新教师基本信息
+     *@Name:  daoUpdateAbstract
+     *@Param:  [id, info]
+     *@Return:  void
+     *@Author:  Bakitchi
+     *@Created-Time:  2018/3/16 下午2:18
+     */
+  public void daoUpdateAbstract(Integer id,String info){
+      TechAllEntity techAllEntity = daoGetTeacherEntityByTeacherId(id);
+      techAllEntity.setAbstractinfo(info);
+      SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+      techAllEntity.setTime(Long.valueOf(df.format(new Date())));
+      dataStoreApi.save(techAllEntity);
+  }
+
+    /**
+     *@Description:更新教师项目
+     *@Name:  daoUpdateTeacherPro
+     *@Param:  [id, info]
+     *@Return:  void
+     *@Author:  Bakitchi
+     *@Created-Time:  2018/3/16 下午2:19
+     */
+  public void daoUpdateTeacherPro(Integer id,String info){
+      TechAllEntity techAllEntity = daoGetTeacherEntityByTeacherId(id);
+      techAllEntity.setProject(info);
+      SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+      techAllEntity.setTime(Long.valueOf(df.format(new Date())));
+      dataStoreApi.save(techAllEntity);
+  }
+
+
+    /**
+     *@Description:更新教师招生信息
+     *@Name:  daoUpdateTeacherWanted
+     *@Param:  [id, info]
+     *@Return:  void
+     *@Author:  Bakitchi
+     *@Created-Time:  2018/3/16 下午2:19
+     */
+  public void daoUpdateTeacherWanted(Integer id,String info){
+      TechAllEntity techAllEntity = daoGetTeacherEntityByTeacherId(id);
+      techAllEntity.setWanted(info);
+      SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+      techAllEntity.setTime(Long.valueOf(df.format(new Date())));
+      dataStoreApi.save(techAllEntity);
+  }
 
 
 }
