@@ -1,18 +1,18 @@
 package com.bakitchi.phoapi.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import com.bakitchi.phoapi.dto.CollegeDTO;
-import com.bakitchi.phoapi.dto.MsgDTO;
-import com.bakitchi.phoapi.dto.ReplyDTO;
-import com.bakitchi.phoapi.dto.TeacherBasicInfoDTO;
+import com.bakitchi.phoapi.dto.*;
 import com.bakitchi.phoapi.entity.*;
+import com.bakitchi.phoapi.entity.TeacherEdgesEntity;
 import com.bakitchi.phoapi.utils.TimeUtil;
 import com.eharmony.pho.api.DataStoreApi;
 import com.eharmony.pho.hbase.PhoenixHBaseDataStoreApiImpl;
@@ -359,8 +359,8 @@ public class BaseDAO {
      */
   public List<String> daoGetAllSubjects(){
 
-      final QuerySelect<TechSubjectEntity,TechSubjectEntity> query = QueryBuilder.builderFor(TechSubjectEntity.class).
-              select().build();
+      final QuerySelect<TechSubjectEntity,TechSubjectEntity> query = QueryBuilder.builderFor(TechSubjectEntity.class)
+              .select().build();
       Iterable<TechSubjectEntity> entities = dataStoreApi.findAll(query);
       List<TechSubjectEntity> techSubjectEntities = new ArrayList<>();
       entities.forEach(single->techSubjectEntities.add(single));
@@ -522,4 +522,153 @@ public class BaseDAO {
       return msgDTOList;
 
   }
+
+
+  public List<YearCI> daoGetSPaperCI(boolean flag,String college){
+      QuerySelect<PapersInfoEntity, PapersInfoEntity> query = null;
+      if (flag){
+          query = QueryBuilder.builderFor(PapersInfoEntity.class)
+                  .setReturnFields("DATA","CITATION").add(Restrictions.like("COLLEGES", college)).select().build();
+      } else {
+          query = QueryBuilder.builderFor(PapersInfoEntity.class)
+                  .setReturnFields("DATA","CITATION").select().build();
+      }
+
+      Iterable<PapersInfoEntity> entities = dataStoreApi.findAll(query);
+      List<PapersInfoEntity> papersInfoEntityList = new ArrayList<>();
+      entities.forEach(single->papersInfoEntityList.add(single));
+
+      Map<String,Integer> sortMap = new HashMap<String, Integer>();
+      String year = null;
+      Integer citationTotal = 0;
+      for(PapersInfoEntity papersInfoEntity : papersInfoEntityList){
+          year = papersInfoEntity.getDate().substring(0,4);
+
+          citationTotal = sortMap.get(year);
+          if (citationTotal == null){
+              citationTotal = 0;
+          }
+
+          sortMap.put(year, citationTotal + papersInfoEntity.getCitation());
+      }
+
+      List<YearCI> yearCIS = new ArrayList<>();
+      Iterator it = sortMap.keySet().iterator();
+      while (it.hasNext()){
+          YearCI yearCI = new YearCI();
+          String key = it.next().toString();
+          yearCI.setYear(key);
+          yearCI.setCitation(sortMap.get(key));
+          yearCIS.add(yearCI);
+      }
+      return yearCIS;
+  }
+
+
+
+
+
+
+  public List<PercentDTO> daoGetYearPercentByCollege(String college){
+      List<YearCI> schoolList = daoGetSPaperCI(false, "");
+      List<YearCI> collegeList = daoGetSPaperCI(true, college);
+
+      List<PercentDTO> percentDTOList =  new ArrayList<>();
+      for (int i = 0; i < schoolList.size(); i++) {
+          PercentDTO percentDTO = new PercentDTO();
+          percentDTO.setYear(schoolList.get(i).getYear());
+          for (int j = 0; j < collegeList.size(); j++) {
+              if (collegeList.get(j).getYear().equals(schoolList.get(i).getYear())){
+                  if (schoolList.get(i).getCitation() != 0){
+                      percentDTO.setPercentage((float)collegeList.get(j).getCitation()/(float)schoolList.get(i).getCitation());
+                  } else {
+                      percentDTO.setPercentage(0);
+                  }
+              }
+          }
+          percentDTOList.add(percentDTO);
+      }
+      return percentDTOList;
+
+  }
+
+
+    public List<TeacherEdgesEntity> daoGetTeacherEdgesByTeacherName(List<String> nameList)
+    {
+        List<TeacherEdgesEntity> teacherEdgesEntityList = new ArrayList<>();
+        for(int i=0;i<nameList.size();i++)
+        {
+            final QuerySelect<TeacherEdgesEntity,TeacherEdgesEntity> query = QueryBuilder.builderFor(TeacherEdgesEntity.class).select()
+                    .add(Restrictions.eq("\"SOURCE\"", nameList.get(i))).build();
+            Iterable<TeacherEdgesEntity> entities = dataStoreApi.findAll(query);
+            entities.forEach(single->teacherEdgesEntityList.add(single));
+        }
+        for(int i=0;i<nameList.size();i++)
+        {
+            final QuerySelect<TeacherEdgesEntity,TeacherEdgesEntity> query = QueryBuilder.builderFor(TeacherEdgesEntity.class).select()
+                    .add(Restrictions.eq("\"TARGET\"", nameList.get(i))).build();
+            Iterable<TeacherEdgesEntity> entities = dataStoreApi.findAll(query);
+            entities.forEach(single->teacherEdgesEntityList.add(single));
+        }
+        return teacherEdgesEntityList;
+    }
+
+
+    public List<TeacherNodesEntity> daoGetTeacherNodesByTeacherName(List<String> nameList)
+    {
+        List<TeacherNodesEntity> teacherNodesEntityList = new ArrayList<>();
+        for(int i=0;i<nameList.size();i++)
+        {
+            final QuerySelect<TeacherNodesEntity,TeacherNodesEntity> query = QueryBuilder.builderFor(TeacherNodesEntity.class).select()
+                    .add(Restrictions.eq("\"NAME\"", nameList.get(i))).build();
+            teacherNodesEntityList.add(dataStoreApi.findOne(query));
+        }
+        return teacherNodesEntityList;
+    }
+
+
+    public List<CollegeEdgesEntity> daoGetCollegeEdgesByCollegeName(List<String> nameList)
+    {
+        List<CollegeEdgesEntity> collegeEdgesEntityList = new ArrayList<>();
+        for(int i=0;i<nameList.size();i++)
+        {
+            final QuerySelect<CollegeEdgesEntity,CollegeEdgesEntity> query = QueryBuilder.builderFor(CollegeEdgesEntity.class).select()
+                    .add(Restrictions.eq("\"SOURCE\"", nameList.get(i))).build();
+            Iterable<CollegeEdgesEntity> entities = dataStoreApi.findAll(query);
+            entities.forEach(single->collegeEdgesEntityList.add(single));
+        }
+        for(int i=0;i<nameList.size();i++)
+        {
+            final QuerySelect<CollegeEdgesEntity,CollegeEdgesEntity> query = QueryBuilder.builderFor(CollegeEdgesEntity.class).select()
+                    .add(Restrictions.eq("\"TARGET\"", nameList.get(i))).build();
+            Iterable<CollegeEdgesEntity> entities = dataStoreApi.findAll(query);
+            entities.forEach(single->collegeEdgesEntityList.add(single));
+        }
+        return collegeEdgesEntityList;
+    }
+
+
+    public List<CollegeNodesEntity> daoGetCollegeNodesByCollegeName(List<String> nameList)
+    {
+        List<CollegeNodesEntity> collegeNodesEntityList = new ArrayList<>();
+        for(int i=0;i<nameList.size();i++)
+        {
+            final QuerySelect<CollegeNodesEntity,CollegeNodesEntity> query = QueryBuilder.builderFor(CollegeNodesEntity.class).select()
+                    .add(Restrictions.eq("\"COLLEGE\"", nameList.get(i))).build();
+            collegeNodesEntityList.add(dataStoreApi.findOne(query));
+        }
+        return collegeNodesEntityList;
+    }
+
+
+    public List<TechSubjectEntity> daoGetSubjectBySubjectName(String name)
+    {
+        final QuerySelect<TechSubjectEntity,TechSubjectEntity> query = QueryBuilder.builderFor(TechSubjectEntity.class).select()
+                .add(Restrictions.like("\"BELONG\"",name)).build();
+        Iterable<TechSubjectEntity> entities = dataStoreApi.findAll(query);
+        List<TechSubjectEntity> subjectList = new ArrayList<>();
+        entities.forEach(single->subjectList.add(single));
+        return subjectList;
+    }
+
 }

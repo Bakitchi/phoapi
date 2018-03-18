@@ -1,6 +1,7 @@
 package com.bakitchi.phoapi.controller;
 
 import com.bakitchi.phoapi.dao.BaseDAO;
+import com.bakitchi.phoapi.dto.PercentDTO;
 import com.bakitchi.phoapi.dto.TeacherBasicInfoDTO;
 import com.bakitchi.phoapi.entity.CollegeNodesEntity;
 import com.bakitchi.phoapi.entity.TechAllEntity;

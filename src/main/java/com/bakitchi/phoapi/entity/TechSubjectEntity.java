@@ -65,4 +65,12 @@ public class TechSubjectEntity {
     public void setCnts(Integer cnts) {
         this.cnts = cnts;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "name='" + theme + '\'' +
+                ", count=" + cnts +
+                '}';
+    }
 }

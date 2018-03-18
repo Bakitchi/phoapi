@@ -46,10 +46,9 @@ public class CollegeNodesEntity {
 
     @Override
     public String toString() {
-        return "CollegeNodesEntity{" +
-                "id=" + id +
-                ", college='" + college + '\'' +
-                ", count=" + count +
+        return "{" +
+                "name='" + college + '\'' +
+                ", degree=" + count +
                 '}';
     }
 }

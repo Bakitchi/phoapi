@@ -9,9 +9,12 @@
         <value>com.bakitchi.phoapi.entity.TechAllEntity</value>
         <value>com.bakitchi.phoapi.entity.PapersInfoEntity</value>
         <value>com.bakitchi.phoapi.entity.CollegeNodesEntity</value>
+        <value>com.bakitchi.phoapi.entity.CollegeEdgesEntity</value>
         <value>com.bakitchi.phoapi.entity.TechSubjectEntity</value>
         <value>com.bakitchi.phoapi.entity.MessageEntity</value>
         <value>com.bakitchi.phoapi.entity.ReplyEntity</value>
+        <value>com.bakitchi.phoapi.entity.TeacherEdgesEntity</value>
+        <value>com.bakitchi.phoapi.entity.TeacherNodesEntity</value>
         <!--<value>com.bakitchi.phoapi.dto.TeacherBasicInfoDTO</value>-->
     </util:list>
 
